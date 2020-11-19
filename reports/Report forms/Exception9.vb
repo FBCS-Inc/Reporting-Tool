@@ -6,7 +6,7 @@ Public Class Exception9
             .RPTNAME = "Operations Exceptions 9 - Dialer Contacted in less than 8 days"
             .FileTextBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\" + .RPTNAME + .rptdte+.ext
             .shfmt = "TTCTTTTDD"
-            .vsql = "select lastct.accountid,lastCt.CallDateTime cdt 
+			.vsql = "select lastct.accountid,lastCt.CallDateTime cdt, lastct.Agent [Agent]
 into #lastContact
 from livevoxresults lastCt with(nolock) 
 inner join [result] with(nolock) on [result].code = lastct.Result and [result].contacted=1
@@ -15,7 +15,7 @@ and lastCt.Result <> 'DH'
 and lastCt.CallDateTime>=DATEADD(day,-7,@start)
 and lastCt.CallDateTime = (select max(L.CallDateTime) from livevoxresults l with(nolock)inner join [result] with(nolock) on [result].code = l.Result and [result].contacted=1 where l.accountid = lastCt.accountid)
 
-select #lastContact.accountid,#lastContact.cdt [LC],priorCt.CallDateTime [PC]
+select #lastContact.accountid,#lastContact.cdt [LC],priorCt.CallDateTime [PC],priorCt.Agent
 into #contactn8
 from #lastContact with(nolock) 
 inner join livevoxresults priorCt with(nolock) on #lastContact.accountid = priorCt.accountid and DATEDIFF(dayofyear,priorCt.CallDateTime,#lastContact.cdt)<8
@@ -36,7 +36,7 @@ case when exists(select * from Phones_Master with(nolock) where phones_master.Nu
 +
 case when exists(select * from Phones_Master with(nolock) where phones_master.Number=master.number and (phones_master.PhoneStatusID is null or phones_master.PhoneStatusID=2) and phones_master.debtorid=debtors.debtorid and phones_master.OnHold=0 and phones_master.PhoneTypeID not in (1,2,3,7)) then 'Other ' else '' end
 [Phone Types],
-convert(varchar,#contactn8.LC,101) [Last Contact], convert(varchar,#contactn8.[PC],101) [Prior Contact]
+convert(varchar,#contactn8.LC,101) [Last Contact], convert(varchar,#contactn8.[PC],101) [Prior Contact],substring(#contactn8.Agent,5,len(#contactn8.Agent)-4) [Prior Agent],isnull(n.result,'') [Result]
 from master with(nolock)
 inner join debtors with(nolock) on debtors.Number=master.number and debtors.Seq=0
 inner join customer with(nolock) on customer.customer=master.customer
@@ -45,10 +45,11 @@ INNER JOIN [miscextra] score WITH (NOLOCK)ON (score.[number] = [master].[number]
 inner join Fact with(nolock) on fact.CustomerID=master.customer
 inner join CustomCustGroups opsgroup with(nolock) on opsgroup.ID=fact.CustomGroupID and opsgroup.Name like 'ops%'
 inner join #contactn8 with(nolock) on #contactn8.accountid = master.number
+left outer join notes n(nolock)on n.number=master.number and n.user0= substring(#contactn8.Agent,5,len(#contactn8.Agent)-4)and n.action='TP'  
 where master.closed is null
 Drop Table #lastContact
 Drop Table #contactn8"
-        End With
+		End With
 
     End Sub
 
