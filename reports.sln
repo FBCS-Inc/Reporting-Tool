@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1062
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "reports", "reports\reports.vbproj", "{042CD3ED-7D4B-4B6D-AD8D-68D41DBB85EF}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Reporting", "Setup1\Setup1.vdproj", "{495B2B90-BDF7-4EF0-A79C-3C70AA30E301}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{042CD3ED-7D4B-4B6D-AD8D-68D41DBB85EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{042CD3ED-7D4B-4B6D-AD8D-68D41DBB85EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{042CD3ED-7D4B-4B6D-AD8D-68D41DBB85EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{042CD3ED-7D4B-4B6D-AD8D-68D41DBB85EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{495B2B90-BDF7-4EF0-A79C-3C70AA30E301}.Debug|Any CPU.ActiveCfg = Debug
+		{495B2B90-BDF7-4EF0-A79C-3C70AA30E301}.Release|Any CPU.ActiveCfg = Release
+		{495B2B90-BDF7-4EF0-A79C-3C70AA30E301}.Release|Any CPU.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10A667F8-017E-4525-87D9-813D2E0CBDD8}
+	EndGlobalSection
+EndGlobal

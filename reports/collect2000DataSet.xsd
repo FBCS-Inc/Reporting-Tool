@@ -1,0 +1,451 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="collect2000DataSet" targetNamespace="http://tempuri.org/collect2000DataSet.xsd" xmlns:mstns="http://tempuri.org/collect2000DataSet.xsd" xmlns="http://tempuri.org/collect2000DataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="MySettings" AppSettingsPropertyName="collect2000ConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="collect2000ConnectionString (MySettings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.reports.My.MySettings.GlobalReference.Default.collect2000ConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="master1TableAdapter" GeneratorDataComponentClassName="master1TableAdapter" Name="master1" UserDataComponentName="master1TableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="collect2000ConnectionString (MySettings)" DbObjectName="collect2000.dbo.master" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT DISTINCT 
+                         master.number AS [File Number], CONVERT(varchar, master.lastpaid, 101) AS [Last Paid], master.desk, ISNULL(ppacreditdesk.TheData, '') AS PPACreditDesk, ISNULL(PPACreditDate.TheData, '') AS PPACreditDate, 
+                         ISNULL(Users.UserName, '') AS [Users Name], CASE WHEN ppacreditdesk.TheData IS NULL OR
+                         ppacreditdesk.TheData NOT LIKE 'A0%' THEN '' WHEN [Users].UserName IS NOT NULL AND EXISTS
+                             (SELECT        *
+                               FROM            notes n WITH (nolock)
+                               WHERE        n.number = master.number AND n.user0 = users.loginname AND n.comment LIKE 'Misc Extra%ppa%term%') THEN 'Y' ELSE 'N' END AS [PPA Terms Added?], CASE WHEN ppacreditdesk.TheData IS NULL OR
+                         ppacreditdesk.TheData NOT LIKE 'A0%' THEN '' WHEN (EXISTS
+                             (SELECT        *
+                               FROM            notes n WITH (nolock)
+                               WHERE        n.number = master.number AND n.user0 = users.loginname AND n.comment LIKE '%part2%' AND n.action = 'PROM' AND n.result = 'ADD') OR
+                             ((SELECT        COUNT(*)
+                                 FROM            PDC_View_FBCS p WITH (nolock)
+                                 WHERE        p.number = master.number AND p.CreatedBy = users.loginname) +
+                             (SELECT        COUNT(*)
+                               FROM            PDCC_View_FBCS p WITH (nolock)
+                               WHERE        p.number = master.number AND p.CreatedBy = users.loginname) +
+                             (SELECT        COUNT(*)
+                               FROM            Promises_View_FBCS p WITH (nolock)
+                               WHERE        p.AcctID = master.number AND p.CreatedBy = users.loginname)) &gt;= 2) THEN 'Y' ELSE 'N' END AS [2+ Arrangements Added?]
+FROM            master WITH (nolock) INNER JOIN
+                         desk WITH (nolock) ON desk.code = master.desk LEFT OUTER JOIN
+                         MiscExtra AS ppacreditdesk WITH (nolock) ON ppacreditdesk.Number = master.number AND ppacreditdesk.Title LIKE 'ppa%credit%desk%' LEFT OUTER JOIN
+                         MiscExtra AS PPACreditDate WITH (nolock) ON PPACreditDate.Number = master.number AND PPACreditDate.Title LIKE 'PPACreditDate' LEFT OUTER JOIN
+                         Users WITH (nolock) ON Users.DeskCode = ppacreditdesk.TheData AND Users.Active = 1 AND ppacreditdesk.TheData IS NOT NULL AND RTRIM(ppacreditdesk.TheData) &lt;&gt; ''
+WHERE        (desk.Branch = 2) AND (master.desk IN ('10G')) AND (master.closed IS NULL) AND (master.closed IS NULL) OR
+                         (desk.Branch = 2) AND (master.desk IN ('PPASPECIAL', '104A')) AND (master.closed IS NULL) AND (ppacreditdesk.TheData IS NULL) AND (NOT (ppacreditdesk.TheData IN ('PPASPECIAL', '104A')) OR
+                         ppacreditdesk.TheData IS NULL) AND
+                             ((SELECT        TOP (1) entered
+                                 FROM            payhistory AS p3 WITH (nolock)
+                                 WHERE        (number = master.number) AND (batchtype IN ('PU', 'PC'))
+                                 ORDER BY entered) BETWEEN @start AND @end) OR
+                         (desk.Branch = 2) AND (master.desk IN ('PPASPECIAL', '104A')) AND (master.closed IS NULL) AND (NOT (ppacreditdesk.TheData IN ('PPASPECIAL', '104A')) OR
+                         ppacreditdesk.TheData IS NULL) AND (RTRIM(LTRIM(ppacreditdesk.TheData)) = '') AND
+                             ((SELECT        TOP (1) entered
+                                 FROM            payhistory AS p3 WITH (nolock)
+                                 WHERE        (number = master.number) AND (batchtype IN ('PU', 'PC'))
+                                 ORDER BY entered) BETWEEN '2020-5-27 00:00:00.000' AND '2020-05-27 23:59:59.000') OR
+                         (desk.Branch = 2) AND (master.desk IN ('PPASPECIAL', '104A')) AND (master.closed IS NULL) AND (NOT (ppacreditdesk.TheData IN ('PPASPECIAL', '104A')) OR
+                         ppacreditdesk.TheData IS NULL) AND (RTRIM(LTRIM(ppacreditdesk.TheData)) NOT LIKE 'A0%') AND
+                             ((SELECT        TOP (1) entered
+                                 FROM            payhistory AS p3 WITH (nolock)
+                                 WHERE        (number = master.number) AND (batchtype IN ('PU', 'PC'))
+                                 ORDER BY entered) BETWEEN '2020-5-27 00:00:00.000' AND '2020-05-27 23:59:59.000') OR
+                         (desk.Branch = 2) AND (master.desk IN ('PPASPECIAL', '104A')) AND (master.closed IS NULL) AND (NOT (ppacreditdesk.TheData IN ('PPASPECIAL', '104A')) OR
+                         ppacreditdesk.TheData IS NULL) AND
+                             ((SELECT        TOP (1) entered
+                                 FROM            payhistory AS p3 WITH (nolock)
+                                 WHERE        (number = master.number) AND (batchtype IN ('PU', 'PC'))
+                                 ORDER BY entered) BETWEEN '2020-5-27 00:00:00.000' AND '2020-05-27 23:59:59.000') AND (PPACreditDate.TheData IS NULL) OR
+                         (desk.Branch = 2) AND (master.desk IN ('PPASPECIAL', '104A')) AND (master.closed IS NULL) AND (NOT (ppacreditdesk.TheData IN ('PPASPECIAL', '104A')) OR
+                         ppacreditdesk.TheData IS NULL) AND
+                             ((SELECT        TOP (1) entered
+                                 FROM            payhistory AS p3 WITH (nolock)
+                                 WHERE        (number = master.number) AND (batchtype IN ('PU', 'PC'))
+                                 ORDER BY entered) BETWEEN '2020-5-27 00:00:00.000' AND '2020-05-27 23:59:59.000') AND (RTRIM(LTRIM(PPACreditDate.TheData)) = '') OR
+                         (desk.Branch = 2) AND (master.desk IN ('PPASPECIAL', '104A')) AND (master.closed IS NULL) AND (NOT (ppacreditdesk.TheData IN ('PPASPECIAL', '104A')) OR
+                         ppacreditdesk.TheData IS NULL) AND
+                             ((SELECT        TOP (1) entered
+                                 FROM            payhistory AS p3 WITH (nolock)
+                                 WHERE        (number = master.number) AND (batchtype IN ('PU', 'PC'))
+                                 ORDER BY entered) BETWEEN '2020-5-27 00:00:00.000' AND '2020-05-27 23:59:59.000') AND (isdate(PPACreditDate.TheData) = 0)
+ORDER BY master.desk, [File Number]</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="false" AutogeneratedName="start" ColumnName="" DataSourceName="" DataTypeServer="unknown" DbType="AnsiString" Direction="Input" ParameterName="@start" Precision="0" Scale="0" Size="1024" SourceColumn="" SourceColumnNullMapping="false" SourceVersion="Current" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="end" ColumnName="" DataSourceName="" DataTypeServer="unknown" DbType="AnsiString" Direction="Input" ParameterName="@end" Precision="0" Scale="0" Size="1024" SourceColumn="" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="File Number" DataSetColumn="File Number" />
+              <Mapping SourceColumn="Last Paid" DataSetColumn="Last Paid" />
+              <Mapping SourceColumn="desk" DataSetColumn="desk" />
+              <Mapping SourceColumn="PPACreditDesk" DataSetColumn="PPACreditDesk" />
+              <Mapping SourceColumn="PPACreditDate" DataSetColumn="PPACreditDate" />
+              <Mapping SourceColumn="Users Name" DataSetColumn="Users Name" />
+              <Mapping SourceColumn="PPA Terms Added?" DataSetColumn="PPA Terms Added?" />
+              <Mapping SourceColumn="2+ Arrangements Added?" DataSetColumn="2+ Arrangements Added?" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="settlementdataTableAdapter" GeneratorDataComponentClassName="settlementdataTableAdapter" Name="settlementdata" UserDataComponentName="settlementdataTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="collect2000ConnectionString (MySettings)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>select distinct 
+customcustgroups.Name [Ops Group Name],
+customer.customer + ': ' + customer.name [Customer],
+master.number [File Number],
+master.Desk,
+convert(varchar,payhistory.entered,101) [Last Paid],
+master.Original [Original Balance],
+master.current0 [Current Balance],
+case 
+when customer.BlanketSif between 1.0 and 99.9 then 
+cast(customer.blanketsif as varchar)
+else isnull(BlanketSif.thedata,'100') end [BlanketSif],
+convert(varchar,case when ISNUMERIC(sifamount.thedata)=1 then sifamount.thedata else '0.00' end,101)
+[SifAmount],
+-paid [Total Paid],
+ cast(case 
+ when customer.BlanketSif between 1.0 and 99.9 then 
+ cast(customer.blanketsif as varchar)
+ when ISNUMERIC(BlanketSif.thedata)=0 then '100'
+ else isnull(BlanketSif.thedata,'100') end as Money) / 100.0 * master.original
+ [Blanket Sif Amount]
+from master with(nolock)
+join status with(nolock) on status.code=master.status
+join customer with(nolock) on customer.customer=master.customer
+join Fact with(nolock) on fact.CustomerID=master.customer
+join customcustgroups with(nolock) on customcustgroups.ID=fact.CustomGroupID and customcustgroups.Name like 'ops%'
+left outer join miscextra BlanketSif with(nolock) on BlanketSif.Number=master.number and BlanketSif.Title='BlanketSif'
+join miscextra sifamount with(nolock) on sifamount.Number=master.number
+	and sifamount.Title='SifAmount'
+	and ISNUMERIC(sifamount.thedata)=1
+join payhistory	 with(nolock) on payhistory.UID=
+	(Select top 1 p.uid from payhistory p with(nolock)
+	where p.number=master.number
+	and p.batchtype in ('PU','PC','PUR','PCR')
+	order by p.entered desc, p.UID desc) 
+where paid&gt;0
+and CAST(case when isnumeric(sifamount.thedata)=1 then sifamount.thedata else '0.00' end as money) &gt; 0
+and payhistory.batchtype in ('PU','PC')
+and payhistory.entered between @start and @end
+and -paid &gt;= CAST(case when isnumeric(sifamount.thedata)=1 then sifamount.thedata else '0.00' end as money)-.05
+and closed is null
+and status.statustype like '0%'
+and master.desk not in ('SIF14','SIF21', 'SIF30', 'PIF15', 'PIF21', 'PIF30', 'SIFPENDNSF', 'UBS','HOLD14POST')
+and not exists(select * from PDC_View_FBCS pdc with(nolock) where pdc.number=master.number and pdc.Active=1)
+and not exists(select * from PDCC_View_FBCS pdcc with(nolock) where pdcc.number=master.number and pdcc.isActive=1)
+and not exists(select * from Promises_View_FBCS prom with(nolock) where prom.AcctID=master.number and prom.Active=1 and (prom.Suspended is null or prom.Suspended=0))
+and ((case when customer.BlanketSif between 1.0 and 99.9 then cast(customer.blanketsif as varchar) else isnull(BlanketSif.thedata,'100') end = '100')
+ or (case  when customer.BlanketSif between 1.0 and 99.9 then cast(customer.blanketsif as varchar) when ISNUMERIC(BlanketSif.thedata)=0 then '100' else isnull(BlanketSif.thedata,'100') end &lt;&gt; '100'
+ and ROUND(-paid,2) &gt;= round(cast(case when customer.BlanketSif between 1.0 and 99.9 then cast(customer.blanketsif as varchar)when ISNUMERIC(BlanketSif.thedata)=0 then '100' else isnull(BlanketSif.thedata,'100') end as Money)/100.0 * master.original ,2)-5.00))</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="true" AutogeneratedName="start" ColumnName="entered" DataSourceName="collect2000.dbo.payhistory" DataTypeServer="datetime" DbType="DateTime" Direction="Input" ParameterName="@start" Precision="0" ProviderType="DateTime" Scale="0" Size="8" SourceColumn="entered" SourceColumnNullMapping="false" SourceVersion="Current" />
+                      <Parameter AllowDbNull="true" AutogeneratedName="end" ColumnName="entered" DataSourceName="collect2000.dbo.payhistory" DataTypeServer="datetime" DbType="DateTime" Direction="Input" ParameterName="@end" Precision="0" ProviderType="DateTime" Scale="0" Size="8" SourceColumn="entered" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="Ops Group Name" DataSetColumn="Ops Group Name" />
+              <Mapping SourceColumn="Customer" DataSetColumn="Customer" />
+              <Mapping SourceColumn="File Number" DataSetColumn="File Number" />
+              <Mapping SourceColumn="Desk" DataSetColumn="Desk" />
+              <Mapping SourceColumn="Last Paid" DataSetColumn="Last Paid" />
+              <Mapping SourceColumn="Original Balance" DataSetColumn="Original Balance" />
+              <Mapping SourceColumn="Current Balance" DataSetColumn="Current Balance" />
+              <Mapping SourceColumn="BlanketSif" DataSetColumn="BlanketSif" />
+              <Mapping SourceColumn="SifAmount" DataSetColumn="SifAmount" />
+              <Mapping SourceColumn="Total Paid" DataSetColumn="Total Paid" />
+              <Mapping SourceColumn="Blanket Sif Amount" DataSetColumn="Blanket Sif Amount" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="FactTableAdapter" GeneratorDataComponentClassName="FactTableAdapter" Name="Fact" UserDataComponentName="FactTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="collect2000ConnectionString (MySettings)" DbObjectName="collect2000.dbo.Fact" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Fill" GenerateShortCommands="false" GeneratorSourceName="Fill" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <DeleteCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>DELETE FROM [Fact] WHERE (((@IsNull_CustomerID = 1 AND [CustomerID] IS NULL) OR ([CustomerID] = @Original_CustomerID)) AND ([ID] = @Original_ID))</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="true" AutogeneratedName="" DataSourceName="" DbType="Int32" Direction="Input" ParameterName="@IsNull_CustomerID" Precision="0" ProviderType="Int" Scale="0" Size="0" SourceColumn="CustomerID" SourceColumnNullMapping="true" SourceVersion="Original" />
+                      <Parameter AllowDbNull="true" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@Original_CustomerID" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="CustomerID" SourceColumnNullMapping="false" SourceVersion="Original" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="Int32" Direction="Input" ParameterName="@Original_ID" Precision="0" ProviderType="Int" Scale="0" Size="0" SourceColumn="ID" SourceColumnNullMapping="false" SourceVersion="Original" />
+                    </Parameters>
+                  </DbCommand>
+                </DeleteCommand>
+                <InsertCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>INSERT INTO [Fact] ([CustomerID]) VALUES (@CustomerID);
+SELECT CustomerID, ID FROM Fact WHERE (ID = SCOPE_IDENTITY()) ORDER BY CustomerID</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="true" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@CustomerID" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="CustomerID" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </InsertCommand>
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT CustomerID, ID FROM Fact WHERE (CustomerID IS NOT NULL) ORDER BY CustomerID</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+                <UpdateCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>UPDATE [Fact] SET [CustomerID] = @CustomerID WHERE (((@IsNull_CustomerID = 1 AND [CustomerID] IS NULL) OR ([CustomerID] = @Original_CustomerID)) AND ([ID] = @Original_ID));
+SELECT CustomerID, ID FROM Fact WHERE (ID = @ID) ORDER BY CustomerID</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="true" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@CustomerID" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="CustomerID" SourceColumnNullMapping="false" SourceVersion="Current" />
+                      <Parameter AllowDbNull="true" AutogeneratedName="" DataSourceName="" DbType="Int32" Direction="Input" ParameterName="@IsNull_CustomerID" Precision="0" ProviderType="Int" Scale="0" Size="0" SourceColumn="CustomerID" SourceColumnNullMapping="true" SourceVersion="Original" />
+                      <Parameter AllowDbNull="true" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@Original_CustomerID" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="CustomerID" SourceColumnNullMapping="false" SourceVersion="Original" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="Int32" Direction="Input" ParameterName="@Original_ID" Precision="0" ProviderType="Int" Scale="0" Size="0" SourceColumn="ID" SourceColumnNullMapping="false" SourceVersion="Original" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="ID" ColumnName="ID" DataSourceName="collect2000.dbo.Fact" DataTypeServer="int" DbType="Int32" Direction="Input" ParameterName="@ID" Precision="0" ProviderType="Int" Scale="0" Size="4" SourceColumn="ID" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </UpdateCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="CustomerID" DataSetColumn="CustomerID" />
+              <Mapping SourceColumn="ID" DataSetColumn="ID" />
+            </Mappings>
+            <Sources>
+              <DbSource ConnectionRef="collect2000ConnectionString (MySettings)" DbObjectName="collect2000.dbo.Fact" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="FillByccg" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetDataBy" GeneratorSourceName="FillByccg" GetMethodModifier="Public" GetMethodName="GetDataBy" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetDataBy" UserSourceName="FillByccg">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT        CustomerID, ID
+FROM            Fact
+WHERE        (CustomerID IS NOT NULL) AND (CustomGroupID = @parm)
+ORDER BY CustomerID</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="true" AutogeneratedName="parm" ColumnName="CustomGroupID" DataSourceName="collect2000.dbo.Fact" DataTypeServer="int" DbType="Int32" Direction="Input" ParameterName="@parm" Precision="0" ProviderType="Int" Scale="0" Size="4" SourceColumn="CustomGroupID" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </Sources>
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="CustomCustGroupsTableAdapter" GeneratorDataComponentClassName="CustomCustGroupsTableAdapter" Name="CustomCustGroups" UserDataComponentName="CustomCustGroupsTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="collect2000ConnectionString (MySettings)" DbObjectName="collect2000.dbo.CustomCustGroups" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="fill" GenerateMethods="Fill" GenerateShortCommands="false" GeneratorSourceName="fill" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="fill">
+                <DeleteCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>DELETE FROM [collect2000].[dbo].[CustomCustGroups] WHERE (([id] = @Original_id) AND ([Name] = @Original_Name))</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="Int32" Direction="Input" ParameterName="@Original_id" Precision="0" ProviderType="Int" Scale="0" Size="0" SourceColumn="id" SourceColumnNullMapping="false" SourceVersion="Original" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@Original_Name" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="Name" SourceColumnNullMapping="false" SourceVersion="Original" />
+                    </Parameters>
+                  </DbCommand>
+                </DeleteCommand>
+                <InsertCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>INSERT INTO [collect2000].[dbo].[CustomCustGroups] ([Name]) VALUES (@Name);
+SELECT ID, Name FROM CustomCustGroups AS ccg WITH (nolock) WHERE (ID = SCOPE_IDENTITY()) ORDER BY Name</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@Name" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="Name" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </InsertCommand>
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT ccg.id,ccg.Name
+        FROM [collect2000].[dbo].[CustomCustGroups] ccg (nolock)
+            order by ccg.Name</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+                <UpdateCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>UPDATE [collect2000].[dbo].[CustomCustGroups] SET [Name] = @Name WHERE (([id] = @Original_id) AND ([Name] = @Original_Name));
+SELECT ID, Name FROM CustomCustGroups AS ccg WITH (nolock) WHERE (ID = @ID) ORDER BY Name</CommandText>
+                    <Parameters>
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@Name" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="Name" SourceColumnNullMapping="false" SourceVersion="Current" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="Int32" Direction="Input" ParameterName="@Original_id" Precision="0" ProviderType="Int" Scale="0" Size="0" SourceColumn="id" SourceColumnNullMapping="false" SourceVersion="Original" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="" DataSourceName="" DbType="AnsiString" Direction="Input" ParameterName="@Original_Name" Precision="0" ProviderType="VarChar" Scale="0" Size="0" SourceColumn="Name" SourceColumnNullMapping="false" SourceVersion="Original" />
+                      <Parameter AllowDbNull="false" AutogeneratedName="ID" ColumnName="ID" DataSourceName="collect2000.dbo.CustomCustGroups" DataTypeServer="int" DbType="Int32" Direction="Input" ParameterName="@ID" Precision="0" ProviderType="Int" Scale="0" Size="4" SourceColumn="ID" SourceColumnNullMapping="false" SourceVersion="Current" />
+                    </Parameters>
+                  </DbCommand>
+                </UpdateCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="id" DataSetColumn="id" />
+              <Mapping SourceColumn="Name" DataSetColumn="Name" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="collect2000DataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="collect2000DataSet" msprop:Generator_UserDSName="collect2000DataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="master1" msprop:Generator_TableClassName="master1DataTable" msprop:Generator_TableVarName="tablemaster1" msprop:Generator_TablePropName="master1" msprop:Generator_RowDeletingName="master1RowDeleting" msprop:Generator_RowChangingName="master1RowChanging" msprop:Generator_RowEvHandlerName="master1RowChangeEventHandler" msprop:Generator_RowDeletedName="master1RowDeleted" msprop:Generator_UserTableName="master1" msprop:Generator_RowChangedName="master1RowChanged" msprop:Generator_RowEvArgName="master1RowChangeEvent" msprop:Generator_RowClassName="master1Row">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="File_x0020_Number" msprop:Generator_ColumnVarNameInTable="columnFile_Number" msprop:Generator_ColumnPropNameInRow="File_Number" msprop:Generator_ColumnPropNameInTable="File_NumberColumn" msprop:Generator_UserColumnName="File Number" type="xs:int" />
+              <xs:element name="Last_x0020_Paid" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnLast_Paid" msprop:Generator_ColumnPropNameInRow="Last_Paid" msprop:Generator_ColumnPropNameInTable="Last_PaidColumn" msprop:Generator_UserColumnName="Last Paid" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="desk" msprop:Generator_ColumnVarNameInTable="columndesk" msprop:Generator_ColumnPropNameInRow="desk" msprop:Generator_ColumnPropNameInTable="deskColumn" msprop:Generator_UserColumnName="desk">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="10" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PPACreditDesk" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnPPACreditDesk" msprop:Generator_ColumnPropNameInRow="PPACreditDesk" msprop:Generator_ColumnPropNameInTable="PPACreditDeskColumn" msprop:Generator_UserColumnName="PPACreditDesk" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PPACreditDate" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnPPACreditDate" msprop:Generator_ColumnPropNameInRow="PPACreditDate" msprop:Generator_ColumnPropNameInTable="PPACreditDateColumn" msprop:Generator_UserColumnName="PPACreditDate" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Users_x0020_Name" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnUsers_Name" msprop:Generator_ColumnPropNameInRow="Users_Name" msprop:Generator_ColumnPropNameInTable="Users_NameColumn" msprop:Generator_UserColumnName="Users Name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="PPA_x0020_Terms_x0020_Added_x003F_" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="_columnPPA_Terms_Added_" msprop:Generator_ColumnPropNameInRow="_PPA_Terms_Added_" msprop:Generator_ColumnPropNameInTable="_PPA_Terms_Added_Column" msprop:Generator_UserColumnName="PPA Terms Added?" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="_x0032__x002B__x0020_Arrangements_x0020_Added_x003F_" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="_column2__Arrangements_Added_" msprop:Generator_ColumnPropNameInRow="_2__Arrangements_Added_" msprop:Generator_ColumnPropNameInTable="_2__Arrangements_Added_Column" msprop:Generator_UserColumnName="2+ Arrangements Added?" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="settlementdata" msprop:Generator_TableClassName="settlementdataDataTable" msprop:Generator_TableVarName="tablesettlementdata" msprop:Generator_TablePropName="settlementdata" msprop:Generator_RowDeletingName="settlementdataRowDeleting" msprop:Generator_RowChangingName="settlementdataRowChanging" msprop:Generator_RowEvHandlerName="settlementdataRowChangeEventHandler" msprop:Generator_RowDeletedName="settlementdataRowDeleted" msprop:Generator_UserTableName="settlementdata" msprop:Generator_RowChangedName="settlementdataRowChanged" msprop:Generator_RowEvArgName="settlementdataRowChangeEvent" msprop:Generator_RowClassName="settlementdataRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Ops_x0020_Group_x0020_Name" msprop:Generator_ColumnVarNameInTable="columnOps_Group_Name" msprop:Generator_ColumnPropNameInRow="Ops_Group_Name" msprop:Generator_ColumnPropNameInTable="Ops_Group_NameColumn" msprop:Generator_UserColumnName="Ops Group Name">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Customer" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnCustomer" msprop:Generator_ColumnPropNameInRow="Customer" msprop:Generator_ColumnPropNameInTable="CustomerColumn" msprop:Generator_UserColumnName="Customer" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="109" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="File_x0020_Number" msprop:Generator_ColumnVarNameInTable="columnFile_Number" msprop:Generator_ColumnPropNameInRow="File_Number" msprop:Generator_ColumnPropNameInTable="File_NumberColumn" msprop:Generator_UserColumnName="File Number" type="xs:int" />
+              <xs:element name="Desk" msprop:Generator_ColumnVarNameInTable="columnDesk" msprop:Generator_ColumnPropNameInRow="Desk" msprop:Generator_ColumnPropNameInTable="DeskColumn" msprop:Generator_UserColumnName="Desk">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="10" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Last_x0020_Paid" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnLast_Paid" msprop:Generator_ColumnPropNameInRow="Last_Paid" msprop:Generator_ColumnPropNameInTable="Last_PaidColumn" msprop:Generator_UserColumnName="Last Paid" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Original_x0020_Balance" msprop:Generator_ColumnVarNameInTable="columnOriginal_Balance" msprop:Generator_ColumnPropNameInRow="Original_Balance" msprop:Generator_ColumnPropNameInTable="Original_BalanceColumn" msprop:Generator_UserColumnName="Original Balance" type="xs:decimal" />
+              <xs:element name="Current_x0020_Balance" msprop:Generator_ColumnVarNameInTable="columnCurrent_Balance" msprop:Generator_ColumnPropNameInRow="Current_Balance" msprop:Generator_ColumnPropNameInTable="Current_BalanceColumn" msprop:Generator_UserColumnName="Current Balance" type="xs:decimal" />
+              <xs:element name="BlanketSif" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnBlanketSif" msprop:Generator_ColumnPropNameInRow="BlanketSif" msprop:Generator_ColumnPropNameInTable="BlanketSifColumn" msprop:Generator_UserColumnName="BlanketSif" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SifAmount" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnSifAmount" msprop:Generator_ColumnPropNameInRow="SifAmount" msprop:Generator_ColumnPropNameInTable="SifAmountColumn" msprop:Generator_UserColumnName="SifAmount" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Total_x0020_Paid" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnTotal_Paid" msprop:Generator_ColumnPropNameInRow="Total_Paid" msprop:Generator_ColumnPropNameInTable="Total_PaidColumn" msprop:Generator_UserColumnName="Total Paid" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Blanket_x0020_Sif_x0020_Amount" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnBlanket_Sif_Amount" msprop:Generator_ColumnPropNameInRow="Blanket_Sif_Amount" msprop:Generator_ColumnPropNameInTable="Blanket_Sif_AmountColumn" msprop:Generator_UserColumnName="Blanket Sif Amount" type="xs:decimal" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Fact" msprop:Generator_TableClassName="FactDataTable" msprop:Generator_TableVarName="tableFact" msprop:Generator_TablePropName="Fact" msprop:Generator_RowDeletingName="FactRowDeleting" msprop:Generator_RowChangingName="FactRowChanging" msprop:Generator_RowEvHandlerName="FactRowChangeEventHandler" msprop:Generator_RowDeletedName="FactRowDeleted" msprop:Generator_UserTableName="Fact" msprop:Generator_RowChangedName="FactRowChanged" msprop:Generator_RowEvArgName="FactRowChangeEvent" msprop:Generator_RowClassName="FactRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CustomerID" msprop:Generator_ColumnVarNameInTable="columnCustomerID" msprop:Generator_ColumnPropNameInRow="CustomerID" msprop:Generator_ColumnPropNameInTable="CustomerIDColumn" msprop:Generator_UserColumnName="CustomerID" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="7" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="CustomCustGroups" msprop:Generator_TableClassName="CustomCustGroupsDataTable" msprop:Generator_TableVarName="tableCustomCustGroups" msprop:Generator_TablePropName="CustomCustGroups" msprop:Generator_RowDeletingName="CustomCustGroupsRowDeleting" msprop:Generator_RowChangingName="CustomCustGroupsRowChanging" msprop:Generator_RowEvHandlerName="CustomCustGroupsRowChangeEventHandler" msprop:Generator_RowDeletedName="CustomCustGroupsRowDeleted" msprop:Generator_UserTableName="CustomCustGroups" msprop:Generator_RowChangedName="CustomCustGroupsRowChanged" msprop:Generator_RowEvArgName="CustomCustGroupsRowChangeEvent" msprop:Generator_RowClassName="CustomCustGroupsRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="id" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnid" msprop:Generator_ColumnPropNameInRow="id" msprop:Generator_ColumnPropNameInTable="idColumn" msprop:Generator_UserColumnName="id" type="xs:int" />
+              <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:master1" />
+      <xs:field xpath="mstns:File_x0020_Number" />
+    </xs:unique>
+    <xs:unique name="settlementdata_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:settlementdata" />
+      <xs:field xpath="mstns:File_x0020_Number" />
+    </xs:unique>
+    <xs:unique name="Fact_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Fact" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="CustomCustGroups_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:CustomCustGroups" />
+      <xs:field xpath="mstns:id" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>
